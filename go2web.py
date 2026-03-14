@@ -112,6 +112,23 @@ def show_help():
     print("go2web -h        - Show this help message")
     print("go2web -s <search-term> -Search for something (top 10 results)")
 
+def fetch_url(url):
+    if url.startswith("https://"):
+        url = url[len("https://"):]
+    host = url 
+    path = "/"
+
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    secure_sock = ssl.wrap_socket(sock)
+    secure_sock.connect((host, 443))
+    request = f"GET {path} HTTP/1.1\r\nHost: {host}\r\nConnection: close\r\n\r\n"
+    secure_sock.send(request.encode())
+    while True:
+        data = secure_sock.recv(4096)
+        if not data:
+            break 
+        print(data.decode(errors = 'ignore'), end = "")
+
 if len(sys.argv) < 2:
     show_help()
     sys.exit(1)
